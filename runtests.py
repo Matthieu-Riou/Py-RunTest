@@ -28,6 +28,7 @@ if __name__ == '__main__':
 
     p = ap.ArgumentParser()
     p.add_argument("-f", "--function", default = '')
+    p.add_argument("-a", "--all", action='store_true')
     args = p.parse_args()
 
     fakestdout = StringIO.StringIO() # Fake file object for Stdout interception
@@ -67,7 +68,7 @@ if __name__ == '__main__':
 
 
     print "=" * 79
-    __test__ = {}
+    __test__ = {} #only functions mapped in __test__ are actually tested by doctest
     for fname, f in targets:
         __test__[fname] = f
 
@@ -81,11 +82,15 @@ if __name__ == '__main__':
         if res.failed == 0:
             print colorString("green", test.format(res))
         else:
-            print "=" * 79
+            if not args.all:
+                print "=" * 79
+
             print colorString("red", test.format(res))
-            print
-            prompt_release_stdout(fakestdout)
-            break
+
+            if not args.all:
+                print
+                prompt_release_stdout(fakestdout)
+                break
 
         del __test__[fname]
 
