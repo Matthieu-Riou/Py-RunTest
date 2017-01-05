@@ -6,11 +6,13 @@ import argparse as ap
 from exam import *
 
 def prompt_release_stdout(fakestdout):
-    # Function that prompts the user to realease content of fakestdout
+    # Function that prompts the user to realease content of fakestdout, return True if the user decides to pass the current function
     while True:
-        action = raw_input("Print failed tests? [F(irst)/a(ll)/n(one)] ")
+        action = raw_input("Print failed tests? [F(irst)/a(ll)/n(one)/p(ass this function)] ")
         action = action.lower()
-        if action == '' or action == 'f':
+        if action.lower() == 'p':
+            return True
+        elif action == '' or action == 'f':
             print fakestdout.getvalue().split("*" * 70)[1]
             break
         elif action == 'a':
@@ -19,6 +21,7 @@ def prompt_release_stdout(fakestdout):
         elif action.lower() == 'n':
             break
 
+    return False
 
 
 
@@ -90,8 +93,8 @@ if __name__ == '__main__':
 
             if not args.all:
                 print
-                prompt_release_stdout(fakestdout)
-                break
+                if not prompt_release_stdout(fakestdout):
+                    break
 
         del __test__[fname]
 
