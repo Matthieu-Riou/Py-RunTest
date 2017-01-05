@@ -8,7 +8,7 @@ from exam import *
 def prompt_release_stdout(fakestdout):
     # Function that prompts the user to realease content of fakestdout, return True if the user decides to pass the current function
     while True:
-        action = raw_input("Print failed tests? [F(irst)/a(ll)/n(one)/p(ass this function)] ")
+        action = raw_input("Print failed tests? [F(irst)/a(ll)/o(ne by one)/n(one)/p(ass this function)] ")
         action = action.lower()
         if action.lower() == 'p':
             return True
@@ -17,6 +17,15 @@ def prompt_release_stdout(fakestdout):
             break
         elif action == 'a':
             print fakestdout.getvalue()
+            break
+        elif action == 'o':
+            for s in fakestdout.getvalue().split("*" * 70)[1:-1]:
+                print s                
+                print
+                action = raw_input("Next error? [Y(es)/n(o)] ")
+                action = action.lower()
+                if action == 'n':
+                        break
             break
         elif action.lower() == 'n':
             break
@@ -99,6 +108,7 @@ if __name__ == '__main__':
                     break
 
                 if args.list and not notPassing:
+                    print "=" * 79
                     action = raw_input("Continue? [Y(es)/n(o)] ")
                     action = action.lower()
 
