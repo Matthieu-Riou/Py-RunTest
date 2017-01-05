@@ -32,6 +32,7 @@ if __name__ == '__main__':
     p = ap.ArgumentParser()
     p.add_argument("-f", "--function", default = '')
     p.add_argument("-a", "--all", action='store_true')
+    p.add_argument("-l", "--list", action='store_true')
     args = p.parse_args()
 
     fakestdout = StringIO.StringIO() # Fake file object for Stdout interception
@@ -93,9 +94,19 @@ if __name__ == '__main__':
 
             if not args.all:
                 print
-                if not prompt_release_stdout(fakestdout):
+                notPassing = prompt_release_stdout(fakestdout)
+                if not notPassing and not args.list:
                     break
 
+                if args.list and not notPassing:
+                    action = raw_input("Continue? [Y(es)/n(o)] ")
+                    action = action.lower()
+
+                    if action == 'n':
+                        break
+
+        fakestdout.close()
+        fakestdout = StringIO.StringIO()
         del __test__[fname]
 
 
