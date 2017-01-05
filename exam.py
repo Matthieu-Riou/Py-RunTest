@@ -64,7 +64,7 @@ def mul(l):
     >>> mul([0, 9, 6, 4, 2, 6, 1, 8, 9])
     0
     '''
-    
+    return 4 #on purpose error to test partially failed example
 
 
 

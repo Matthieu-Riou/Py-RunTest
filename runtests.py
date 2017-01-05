@@ -85,7 +85,8 @@ if __name__ == '__main__':
             if not args.all:
                 print "=" * 79
 
-            print colorString("red", test.format(res))
+            color = "yellow" if res.failed < res.attempted else "red"
+            print colorString(color, test.format(res))
 
             if not args.all:
                 print
