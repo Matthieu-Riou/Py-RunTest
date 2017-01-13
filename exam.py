@@ -64,7 +64,7 @@ def mul(l):
     >>> mul([0, 9, 6, 4, 2, 6, 1, 8, 9])
     0
     '''
-    return 4 #on purpose error to test partially failed example
+    return 4 # On purpose error to test partially failed example
 
 
 
@@ -153,7 +153,7 @@ def is_nucleotide(c):
     >>> is_nucleotide('T')
     True
     '''
-    
+    return True
 
 
 
@@ -163,14 +163,17 @@ def is_valid_dna_sequence(s):
 
     >>> is_valid_dna_sequence('AT')
     True
-    >>> is_valid_dna_sequence('ATF')
+    >>> is_valid_dna_sequence('TAF')
     False
     >>> is_valid_dna_sequence('TTATCCCG')
     True
     >>> is_valid_dna_sequence('TT1TCCCG')
     False
+    >>> check_usage(is_valid_dna_sequence, "is_nucleotide")
+    True
     '''
-    
+    return is_nucleotide(s[0]) # On purpose to test function dependency checks
+                               # Replace with True then check all failed tests
 
 
 
