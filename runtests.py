@@ -15,7 +15,6 @@ def check_usage(f, name):
     matchName = False
     lines = fake_stdout.getvalue().split("\n")
     lines = [l.split() for l in lines]
-    del lines[0][0]
     for l in lines:
         i = l.index('LOAD_GLOBAL') if 'LOAD_GLOBAL' in l else -1 
         if i != -1:
