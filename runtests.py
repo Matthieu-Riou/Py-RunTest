@@ -1,9 +1,27 @@
 #! /usr/bin/env python
 
-import sys, doctest, string, StringIO
+import sys, doctest, string, StringIO, dis
 from colors import colorString
 import argparse as ap
 from exam import *
+
+
+def check_usage(f, name):
+    backup_stdout = sys.stdout
+    fake_stdout = StringIO.StringIO()
+    sys.stdout = fake_stdout
+    dis.dis(f)
+    sys.stdout = backup_stdout
+    matchName = False
+    lines = fake_stdout.getvalue().split("\n")
+    lines = [l.split() for l in lines]
+    for l in lines:
+        i = l.index('LOAD_GLOBAL') if 'LOAD_GLOBAL' in l else -1 
+        if i != -1:
+            if l[i+2] == ('(%s)' % name):
+                return True
+    return False
+
 
 def prompt_release_stdout(fakestdout):
     # Function that prompts the user to realease content of fakestdout, return True if the user decides to pass the current function
