@@ -1,9 +1,10 @@
-#! /usr/bin/env python
+#! /usr/bin/python -u
 
-import sys, doctest, string, StringIO, dis
+import sys, doctest, string, StringIO, dis, os, time, select
 from colors import colorString
 import argparse as ap
-from exam import *
+import subprocess as sp
+
 
 
 def check_usage(f, name):
@@ -53,6 +54,55 @@ def prompt_release_stdout(fakestdout):
 
 
 
+def read_timeout(f, n):
+    r, w, e = select.select([ f ], [], [], 0)
+    time.sleep(0.5)
+    if r:
+        return os.read(f.fileno(), n)
+    return ""
+
+
+
+def write_timeout(f, content):
+    while True:
+        r, w, e = select.select([ f ], [], [], 0)
+        time.sleep(0.5)
+        if w:
+            f.write(content)
+            break
+
+
+def exec_wrap(fileName, testcaseFile):
+
+    p = sp.Popen(["unbuffer", "python", fileName], stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE, bufsize=-1)
+
+
+    with open(testcaseFile) as f:
+        out = ""
+        while True:
+            line = f.readline()
+            if not line:
+                break
+            mode, content = line.split(";")[:2]
+            if mode == "OUT-NONL":
+                out += content
+            elif mode == "OUT-NL":
+                out += content + "\n"
+            elif mode == "IN-NL":
+                p.stdin.write(content + "\n")
+                out += content + "\n"
+        print out,
+
+
+def test_ex1():
+    '''
+    >>> exec_wrap("ex1.py", "ex1.py.io")
+    Input op: *
+    Input lhs: 3
+    Input rhs: 4
+    12.0
+    '''
+
 
 if __name__ == '__main__':
 
@@ -60,6 +110,7 @@ if __name__ == '__main__':
     p.add_argument("-f", "--function", default = '')
     p.add_argument("-a", "--all", action='store_true')
     p.add_argument("-l", "--list", action='store_true')
+    p.add_argument("--program", default = "ex1.py")
     args = p.parse_args()
 
     fakestdout = StringIO.StringIO() # Fake file object for Stdout interception
@@ -67,23 +118,7 @@ if __name__ == '__main__':
 
 
     targets = [
-        ("add_ints", add_ints),
-        ("f1", f1),
-        ("f2", f2),
-        ("mul", mul),
-        ("sum_evens", sum_evens),
-        ("surround", surround),
-        ("center_in_field", center_in_field),
-        ("comment_block", comment_block),
-        ("is_nucleotide", is_nucleotide),
-        ("is_valid_dna_sequence", is_valid_dna_sequence),
-        ("get_complement", get_complement),
-        ("get_complement_sequence", get_complement_sequence),
-        ("get_number_from_letter", get_number_from_letter),
-        ("get_letter_from_number", get_letter_from_number),
-        ("shift_mod26", shift_mod26),
-        ("encrypt_char", encrypt_char),
-        ("encrypt_string", encrypt_string)
+        ("test_ex1", test_ex1)
     ]
 
 
@@ -139,6 +174,5 @@ if __name__ == '__main__':
 
 
     print "=" * 79
-
 
 
